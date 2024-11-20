@@ -1,0 +1,22 @@
+{
+    "name": "Phaser Game",
+    "short_name": "Phaser",
+    "description": "A fun Phaser game you can play offline",
+    "start_url": "/",
+    "display": "standalone",  // Makes the game look like a native app
+    "background_color": "#000000",  // Set the background color of the splash screen
+    "theme_color": "#ffffff",  // Set the theme color for the app
+    "icons": [
+      {
+        "src": "/assets/icons/icon-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "/assets/icons/icon-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }
+  
