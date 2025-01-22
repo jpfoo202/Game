@@ -5,7 +5,7 @@ class Example extends Phaser.Scene {
             'Mojito', 'Margarita', 'Martini', 'Daiquiri', 'Old Fashioned',
             'Negroni', 'Moscow Mule', 'Whiskey Sour', 'Gin and Tonic', 'Cosmopolitan',
             'Piña Colada', 'Aperol Spritz', 'Bloody Mary', 'Mai Tai',
-            'Caipirinha', 'Paloma', 'Espresso Martini', 'Pornstar Martini', 'Gin Bramble',
+            'Caipirinha', 'Paloma', 'Espresso Martini', 'Passion Fruit Martini', 'Gin Bramble',
             'Gin Fizz', 'Campari Spritz', 'Americano', 'Manhattan', 'Baby Guinness'
         ];
         this.glasses = [
@@ -40,6 +40,7 @@ class Example extends Phaser.Scene {
 
     preload() {
         this.load.image('barBackground', 'https://play.rosebud.ai/assets/bar room from behind the bar.png?uUa7');
+        this.load.audio('buttonClick', 'https://play.rosebud.ai/assets/click-buttons-ui-menu-sounds-effects-button-8-205394.mp3?A8jX');
     }
     create() {
         // Add the background image
@@ -111,8 +112,9 @@ class Example extends Phaser.Scene {
         });
     }
     selectGlass(glass) {
-        this.selectedGlass = glass;
+        this.sound.play('buttonClick');
         if (glass === this.currentOrderGlass) {
+            this.selectedGlass = glass;
             this.glassButtons[glass].setFillStyle(0x00ff00); // Green for correct
             console.log(`Correct! Selected glass: ${glass}`);
             this.createFlashEffect(this.glassButtons[glass]);
@@ -225,19 +227,18 @@ class Example extends Phaser.Scene {
         });
     }
     selectIngredient(ingredient) {
+        this.sound.play('buttonClick');
         if (this.currentOrderIngredients.includes(ingredient)) {
             // If the ingredient is correct, always allow selection
             this.ingredientButtons[ingredient].setFillStyle(0x00ff00); // Green for correct
             console.log(`Correct! Selected ingredient: ${ingredient}`);
             this.createFlashEffect(this.ingredientButtons[ingredient]);
             this.createLaserFlashEffectForButton(this.ingredientButtons[ingredient]);
-
-            // Only remove the ingredient if it hasn't been selected before
+            // Remove the ingredient if it's correct, regardless of previous selections
             if (!this.selectedIngredients.has(ingredient)) {
                 this.selectedIngredients.add(ingredient);
                 this.currentOrderIngredients = this.currentOrderIngredients.filter(i => i !== ingredient);
             }
-
             // Check if all ingredients have been selected and the correct glass is chosen
             if (this.currentOrderIngredients.length === 0 && this.selectedGlass === this.currentOrderGlass) {
                 console.log('Order completed correctly!');
@@ -247,13 +248,10 @@ class Example extends Phaser.Scene {
                 });
             }
         } else {
-            // If the ingredient is incorrect, only show as incorrect if it hasn't been selected before
-            if (!this.selectedIngredients.has(ingredient)) {
-                this.ingredientButtons[ingredient].setFillStyle(0xff0000); // Red for incorrect
-                this.cameras.main.shake(250, 0.01); // Slight shake for 250ms
-                console.log(`Incorrect! Selected ingredient: ${ingredient}`);
-                this.selectedIngredients.add(ingredient);
-            }
+            // Show incorrect feedback but don't prevent future correct selections
+            this.ingredientButtons[ingredient].setFillStyle(0xff0000); // Red for incorrect
+            this.cameras.main.shake(250, 0.01); // Slight shake for 250ms
+            console.log(`Incorrect! Selected ingredient: ${ingredient}`);
         }
     }
     generateRandomOrder() {
@@ -268,7 +266,7 @@ class Example extends Phaser.Scene {
             this.currentOrderGlass = 'Coupe';
         } else if (randomCocktail === 'Martini' || randomCocktail === 'Manhattan') {
             this.currentOrderGlass = 'Martini';
-        } else if (randomCocktail === 'Pornstar Martini') {
+        } else if (randomCocktail === 'Passion Fruit Martini') {
             this.currentOrderGlass = 'Coupe';
         } else if (randomCocktail === 'Daiquiri') {
             this.currentOrderGlass = 'Coupe';
@@ -327,7 +325,7 @@ class Example extends Phaser.Scene {
             return ['Aperol', 'Prosecco', 'Soda'];
         } else if (cocktail === 'Margarita') {
             return ['Tequila', 'Cointreau', 'Lime'];
-        } else if (cocktail === 'Pornstar Martini') {
+        } else if (cocktail === 'Passion Fruit Martini') {
             return ['Vodka', 'Passion fruit-j', 'Passoa', 'Simple Syrup', 'Lime', 'Passion fruit'];
         } else if (cocktail === 'Old Fashioned') {
             return ['Whiskey', 'Bitters', 'Simple Syrup'];
